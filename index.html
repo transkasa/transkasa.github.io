@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Form Example</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <body>
+    <section class="section container">
+      <form name="contact" id="contact-form">
+
+        <div class="field">
+          <label class="label" for="email">Email</label>
+          <div class="control has-icons-left">
+            <input
+              class="input"
+              type="email"
+              required
+              placeholder="Email input"
+              name="Email"
+            />
+            <span class="icon is-small is-left">
+              <i class="fas fa-envelope"></i>
+            </span>
+          </div>
+        </div>
+        
+        <div class="field">
+          <label class="label" for="email">Skin type</label>
+            <input type="radio" id="DrySkin" name="SkinType" value="DrySkin" required>
+            <label for="DrySkin">Dry Skin</label><br>
+            <input type="radio" id="OilySkin" name="SkinType" value="OilySkin" required>
+            <label for="OilySkin">Oily Skin</label><br>
+        </div>
+
+        <div class="field is-grouped">
+          <div class="control">
+            <button class="button is-primary" type="submit">Submit</button>
+          </div>
+        </div>
+      </form>
+    </section>
+  </body>
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+      const { createClient } = supabase;
+      supabase = createClient("https://mvxdoyxrncykqehzqenx.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12eGRveXhybmN5a3FlaHpxZW54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTA2NDMxMjksImV4cCI6MTk2NjIxOTEyOX0.WxtWX6kSFcIoneT5Kq9CunCNM9aQi-SieOyFAgIqVn8");
+      const form = document.querySelector('#contact-form');
+      form.addEventListener('submit', async (event) => {
+          event.preventDefault()
+
+          const formInputs = form.querySelectorAll('input')
+
+          let submision = {}
+
+          formInputs.forEach(element => {
+            const { value, name } = element
+            if (value) {
+                submision[name] = value
+            }
+          })
+          console.log(submision);
+         const { error , data} = await supabase.from('Customers').insert([submision], { returning: 'minimal'})
+
+          if (error) {
+              alert('There was an error please try again')
+          } else {
+            Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: 'Lorem ipsum',
+            showConfirmButton: false,
+            timer: 1500
+            });
+            setTimeout(() => { location.reload(); }, 2000);
+          }
+
+          formInputs.forEach(element => element.value = '')
+
+      });
+  </script>
+</html>
